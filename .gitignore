@@ -1,0 +1,44 @@
+.venv/
+__pycache__/
+*.egg-info/
+outputs/
+demo/
+.DS_Store
+
+# Local environments, build products and tool caches.
+venv/
+build/
+dist/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Private settings and local work records.
+.env
+.env.*
+!.env.example
+.codex/
+.agents/
+*.log
+Time-lapse工作/
+Time-lapse-XMP备份/
+
+# Local validation screenshots may contain photos or filesystem paths.
+docs/*.png
+docs/*.jpg
+docs/*.jpeg
+
+# Source photos, sidecars and rendered media do not belong in the source repo.
+*.[aA][rR][wW]
+*.[cC][rR]2
+*.[cC][rR]3
+*.[nN][eE][fF]
+*.[dD][nN][gG]
+*.[rR][aA][fF]
+*.[oO][rR][fF]
+*.[rR][wW]2
+*.[xX][mM][pP]
+*.[mM][pP]4
+*.[mM][oO][vV]

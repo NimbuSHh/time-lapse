@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Time-lapse · 实时总进度</title><link rel="stylesheet" href="/monitor.css"><script src="/progress.js" defer></script><script src="/monitor.js" defer></script></head><body>
+<header><b>◒ Time-lapse</b><span>实时任务进度</span><small>本机 · 只读查看</small></header>
+<main><div class="heading"><div><p class="eyebrow">AUTOMATIC PROCESSING</p><h1>自动调色正在进行</h1></div><span id="state">正在连接</span></div>
+<section class="overview"><div class="total"><span>整体流程进度</span><strong id="percent">—</strong></div><progress id="overall" max="100" aria-label="整体流程进度"></progress><p id="note"></p><div class="current"><span>当前阶段</span><h2 id="phase">正在读取任务</h2><p id="frame"></p></div><p id="freshness" role="status" aria-live="polite"></p><p id="error" role="alert" hidden></p></section>
+<section class="schedule"><div class="schedule-head"><h2>处理阶段</h2><span>第二轮仅在需要时执行</span></div><ol id="stages"></ol></section>
+<section id="result" hidden><h2>结果已保存</h2><p id="outcome"></p><code id="resultPath"></code></section>
+<footer>每 2 秒更新。此页面只读取任务记录，关闭或刷新页面不会停止处理。</footer></main></body></html>

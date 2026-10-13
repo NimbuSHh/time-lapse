@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Time-lapse · 延时摄影工作台</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script><script src="/progress.js" defer></script><script src="/auto.js" defer></script></head>
+<body>
+<header><a href="/" class="brand">◒ <b>Time-lapse</b></a><span>延时摄影工作台</span><small><i></i> 本地处理 · RAW 只读</small></header>
+<main>
+<div id="status" role="status" aria-live="polite">选择 RAW 文件夹，生成完整预览；观看确认后再导出全尺寸结果。</div>
+<div class="layout">
+<aside aria-label="操作流程" tabindex="0">
+<div class="workflow-heading"><div><div class="eyebrow">WORKFLOW</div><h1>自动调色与成片</h1></div></div>
+<p class="muted"><a href="/trajectory">查看当前任务与视频 →</a>　完整播放确认后再处理全尺寸。</p>
+<section class="workflow-step" id="autoWorkflow">
+<p class="muted">保留自然光变化，修正持续曝光台阶。新素材无需提前导出小图。</p>
+<form id="autoForm"><fieldset id="autoControls"><label for="autoRaw">素材与工作文件夹</label><div class="folder-field"><input id="autoRaw" required placeholder="选择 RAW 所在文件夹"><button type="button" data-folder="autoRaw" data-purpose="raw">选择文件夹</button></div>
+<p class="fine">沿用已保存的 XMP。开始前保存并关闭 ACR 窗口，处理期间由程序使用 Photoshop。</p>
+<div class="destination"><span>全部结果与中间文件保存在</span><code id="autoOutput">所选文件夹 / Time-lapse工作/</code></div>
+<details class="optional-options"><summary>高级：调整测量区域</summary><p class="fine">默认自动选择并固定区域。不适用时可指定矩形范围；这些区域只用于测量，不裁切照片。先在右侧载入原始参考画面，可拖动框选，也可填写百分比。四个区域应互不重叠。</p><label class="check"><input id="autoManualRegions" type="checkbox">手动指定四个区域</label><div id="autoRegions" hidden><fieldset class="auto-roi"><legend>亮部区域</legend><div class="auto-roi-fields"><label>左<input data-roi="primary" data-coordinate="0" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="亮部区域左百分比"></label><label>上<input data-roi="primary" data-coordinate="1" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="亮部区域上百分比"></label><label>右<input data-roi="primary" data-coordinate="2" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="亮部区域右百分比"></label><label>下<input data-roi="primary" data-coordinate="3" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="亮部区域下百分比"></label></div></fieldset><fieldset class="auto-roi"><legend>参考区域</legend><div class="auto-roi-fields"><label>左<input data-roi="secondary" data-coordinate="0" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="参考区域左百分比"></label><label>上<input data-roi="secondary" data-coordinate="1" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="参考区域上百分比"></label><label>右<input data-roi="secondary" data-coordinate="2" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="参考区域右百分比"></label><label>下<input data-roi="secondary" data-coordinate="3" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="参考区域下百分比"></label></div></fieldset><fieldset class="auto-roi"><legend>检查区域 A</legend><div class="auto-roi-fields"><label>左<input data-roi="check_a" data-coordinate="0" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 A左百分比"></label><label>上<input data-roi="check_a" data-coordinate="1" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 A上百分比"></label><label>右<input data-roi="check_a" data-coordinate="2" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 A右百分比"></label><label>下<input data-roi="check_a" data-coordinate="3" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 A下百分比"></label></div></fieldset><fieldset class="auto-roi"><legend>检查区域 B</legend><div class="auto-roi-fields"><label>左<input data-roi="check_b" data-coordinate="0" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 B左百分比"></label><label>上<input data-roi="check_b" data-coordinate="1" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 B上百分比"></label><label>右<input data-roi="check_b" data-coordinate="2" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 B右百分比"></label><label>下<input data-roi="check_b" data-coordinate="3" type="number" min="0" max="100" step="0.1" placeholder="%" aria-label="检查区域 B下百分比"></label></div></fieldset></div></details>
+<button id="autoStart" class="primary" type="submit">开始自动调色</button></fieldset></form>
+<p id="autoStatus" role="status" aria-live="polite" class="fine">自动建立 RAW 工作副本，原片和原 XMP 保持不变。</p>
+<div id="autoProgressPanel" hidden><div class="auto-total"><strong>当前阶段进度</strong><output id="autoTotalProgress">0%</output></div><progress id="autoProgress" aria-label="当前阶段进度" max="100" value="0"></progress><p id="autoStage" class="fine"></p><p id="autoProgressNote" class="fine"></p></div>
+<button id="autoCancel" type="button" hidden>停止并保留进度</button>
+</section>
+<details id="manualFlow" class="more-operations"><summary>手动调整与高级工具</summary>
+<section class="workflow-step" id="step-import"><h2><span class="step">01</span>选素材</h2><p class="muted">RAW、XMP 与 JPG 按同名对应；小图请用当前 XMP 导出为 sRGB，保持裁切和尺寸一致。</p>
+<form id="importForm"><label for="raw">RAW 与 XMP 文件夹</label><div class="folder-field"><input id="raw" required placeholder="选择原片所在文件夹"><button type="button" data-folder="raw" aria-label="选择 RAW 与 XMP 文件夹">选择文件夹</button></div>
+<label class="check"><input id="sameFolder" type="checkbox">JPG 也在这个文件夹</label>
+<label for="previews">ACR 小图文件夹</label><div class="folder-field"><input id="previews" required placeholder="选择 ACR 导出的 JPG 文件夹"><button id="pickPreviews" type="button" data-folder="previews" aria-label="选择 ACR 小图文件夹">选择文件夹</button></div>
+<details class="optional-options" id="step-analysis"><summary>测光与拍摄选项</summary><p class="muted">默认使用整张画面；需要时可选稳定区域测光，照片不会被裁切。</p><button id="pickRegion" type="button" class="secondary">框选参考区域</button><p id="roiSummary" class="muted">当前使用整张画面。</p><label>拍摄方式<select id="mode"><option value="manual">手动调整快门 / ISO / 光圈</option><option value="visual">自动曝光 / 参数未知（仅短时平滑）</option></select></label></details>
+<button class="primary" type="submit" form="importForm">分析序列 <span>→</span></button></form>
+<details class="demo-details"><summary>体验合成示例</summary><button id="demo" class="secondary">载入合成示例</button><p class="fine">已知曝光跳变的测试图，不是真实日出或 RAW。</p></details></section>
+<section class="workflow-step" id="step-correction"><h2><span class="step">02</span>调整</h2><fieldset id="controls" disabled><label>平滑强度 <output id="strengthValue">60%</output><input id="strength" type="range" min="0" max="1" step=".05" value=".6"></label>
+<div id="step-events"><div class="panel-head"><h3>曝光台阶</h3><span id="eventCount" class="badge">0 个可选</span></div><p class="muted">勾选要消除的曝光台阶，默认不选。有估计的候选均可选择；判断依据供参考，勾选后可预览、撤销。</p><label class="check"><input id="selectAllEvents" type="checkbox" disabled>全选有估计的候选</label><div id="events" class="event-list">分析后显示候选断点。</div></div>
+<details class="optional-options"><summary>更多调整</summary><label>平滑窗口（帧）<select id="window"><option>7</option><option selected>15</option><option>31</option><option>61</option></select></label><label class="check"><input id="smoothGaps" type="checkbox" checked>平滑拍摄间隔接缝</label><p class="muted">连续衔接停顿前后的亮度，保留未勾选的曝光台阶与已有曝光编辑。</p><div class="roi"><label>开头偏移 EV<input id="start" type="number" min="-2" max="2" step=".1" value="0"></label><label>结尾偏移 EV<input id="end" type="number" min="-2" max="2" step=".1" value="0"></label></div></details>
+<button id="calculate" type="button" class="primary">更新预览</button></fieldset>
+<details class="optional-options"><summary>计算说明与逐帧曝光值</summary><p class="fine">默认保留首尾亮度。绿色曲线是亮度目标，实际效果需用 ACR 重新显影查看。</p><p id="gapStatus" class="fine" role="status"></p><p id="responseStatus" class="fine" role="status">分析后显示曝光换算依据。</p><div class="table-wrap"><table><thead><tr><th>帧</th><th>文件</th><th>原曝光</th><th>增量</th><th>新曝光</th></tr></thead><tbody id="rows"></tbody></table></div></details></section>
+<section class="workflow-step" id="step-export"><h2><span class="step">04</span>导出</h2><p class="muted">选择修正 XMP 的保存位置，实际效果需用 ACR 重新显影复核。</p>
+<label for="exportDestination">导出方式</label><select id="exportDestination">
+<option value="source_subdir" selected>导出到原目录的新建子目录</option>
+<option value="source_backup">备份 + 导出到原目录</option>
+<option value="custom">自行指定目录</option></select>
+<div id="exportCustomDirectory" hidden><label for="exportDirectory">保存目录</label><div class="folder-field"><input id="exportDirectory" placeholder="选择或输入完整目录路径"><button type="button" data-folder="exportDirectory">选择文件夹</button></div></div>
+<label id="exportAcrConfirmation" class="check" hidden><input id="exportClosed" type="checkbox">已关闭 ACR 中的此序列，允许备份后替换原目录的 XMP</label>
+<div class="destination"><span>保存位置</span><code id="outputLocation">请先选择 RAW/XMP 文件夹</code><small id="exportDestinationHint">每次新建独立修正包，原 XMP 保持不变。</small></div>
+<button id="export" class="primary" disabled>导出修正包</button><p id="exportReason" class="fine" role="status" aria-live="polite"></p><div id="exportResult" role="status"></div><details class="optional-options"><summary>修正包内容</summary><p class="fine">新建子目录模式中，corrected 保存修正文件，originals 保存原 XMP 备份；包内附分析清单。自行指定目录时，仅直接保存修正 XMP，不新建子目录。选择“备份 + 导出到原目录”会先完成备份，再替换原目录中的同名 XMP，RAW 文件不变。</p></details>
+<details class="optional-operation" id="exposureCalibration"><summary>曝光校准（保留当前目标）</summary>
+<p class="muted">用两组 ACR 显影测量曝光滑块的实际响应，保持当前绿色亮度目标和其他显影参数。</p>
+<button id="exposurePrepare" type="button" disabled>生成两组曝光校准 XMP</button><p id="exposurePrepareReason" class="fine" role="status" aria-live="polite"></p>
+<p id="exposureCalibrationResult" class="fine" role="status"></p>
+<form id="exposureCalibrateForm">
+<label for="exposureBaseline">baseline 基准 XMP 对应的 ACR 小图目录</label><div class="folder-field"><input id="exposureBaseline" required placeholder="同名、同尺寸、保留元数据的 sRGB 小图"><button type="button" data-folder="exposureBaseline" data-purpose="previews">选择文件夹</button></div>
+<label for="exposureProbe">probe-exposure 校准 XMP 对应的 ACR 小图目录</label><div class="folder-field"><input id="exposureProbe" required placeholder="仅曝光改变 ±0.2 EV 的显影结果"><button type="button" data-folder="exposureProbe" data-purpose="previews">选择文件夹</button></div>
+<p class="fine">两组必须覆盖全序列，保持显影设置和裁切一致。同一素材的校准包可在修改亮度目标、刷新或重启后继续使用；素材或参考区域改变后需重新分析。</p>
+<button id="exposureCalibrate" type="submit" disabled>导入校准并更新曝光增量</button><p id="exposureCalibrateReason" class="fine" role="status" aria-live="polite"></p></form></details>
+<details class="optional-operation"><summary>写回原目录（先备份）</summary><div class="destination"><span>自动备份位置 · 导入目录内</span><code id="backupLocation">所选 RAW/XMP 文件夹 / Time-lapse-XMP备份/</code><small>每次应用新建版本，原始设置始终保留</small></div><label class="check"><input id="acrClosed" type="checkbox">已关闭 ACR 中的此序列，允许替换 RAW 同目录的 XMP</label><button id="applyXmp" disabled>自动备份并写回 XMP</button><p id="applyReason" class="fine" role="status" aria-live="polite"></p><p class="fine">先完整备份到 <strong>Time-lapse-XMP备份/</strong>，再替换同名 XMP。RAW 文件不变。</p><div id="applyResult" role="status"></div></details>
+<details class="more-operations"><summary>更多操作</summary>
+<button id="jointOpen" type="button" class="secondary">手动联合校准 →</button>
+<details class="optional-operation" id="step-verify"><summary>ACR 重新显影复核</summary><p class="muted">分析并生成亮度目标后，即可选择 ACR 导出的同名、同尺寸 sRGB 小图进行对照，无需先导出修正包。目标自动保存在本机，刷新或重启后可恢复复核。</p><label for="verifyPath">ACR 重新导出的小图文件夹</label><div class="folder-field"><input id="verifyPath" placeholder="选择重新显影后的 JPG 文件夹"><button type="button" data-folder="verifyPath" aria-label="选择 ACR 复核小图文件夹">选择文件夹</button></div><button id="verify" disabled aria-describedby="verifyReason">对照当前分析目标复核</button><p id="verifyReason" class="fine" role="status" aria-live="polite">尚无分析结果，请先分析序列。</p><div id="verification"></div><details id="verificationWarnings" hidden><summary>查看需要确认的帧（曲线空心圆）</summary><label for="verificationFrame">选择帧</label><select id="verificationFrame"></select><p id="verificationFrameInfo" class="fine"></p><button id="verificationLocate" type="button">查看此帧小图</button></details></details>
+<details class="optional-operation" id="step-feedback"><summary>保留冻结目标的残差修正</summary><p class="muted">核对本次显影来源，再根据实测响应计算下一轮曝光。留空使用当前分析目标；指定包则保留该包目标。无需先导出或重新分析。</p>
+<form id="feedbackForm">
+<label for="feedbackSource">保存目标的备份或修正包目录</label><div class="folder-field"><input id="feedbackSource" placeholder="留空使用当前分析目标；也可选备份或修正包"><button type="button" data-folder="feedbackSource" data-purpose="raw">选择文件夹</button></div>
+<label for="feedbackOriginal">首次分析的原始小图目录</label><div class="folder-field"><input id="feedbackOriginal" required placeholder="与首次分析快照对应的 JPG 文件夹"><button type="button" data-folder="feedbackOriginal" data-purpose="previews">选择文件夹</button></div>
+<label for="feedbackXmps">当前工作副本的 XMP 目录</label><div class="folder-field"><input id="feedbackXmps" required placeholder="本次重新显影实际使用的 XMP"><button type="button" data-folder="feedbackXmps" data-purpose="raw">选择文件夹</button></div>
+<label for="feedbackPreviews">最新 ACR 显影小图目录</label><div class="folder-field"><input id="feedbackPreviews" required placeholder="本次复核的 JPG 文件夹"><button type="button" data-folder="feedbackPreviews" data-purpose="verifyPath">选择文件夹</button></div>
+<button id="feedbackSubmit" type="submit" class="primary" aria-describedby="feedbackReason">核对来源并生成独立修正包</button><p id="feedbackReason" class="fine" role="status" aria-live="polite"></p></form>
+<p class="fine">仅写入新的修正包，不覆盖原素材。来源不符时仅生成检查报告；部分帧缺少响应证据时保持当前值并列出原因。新包仍须在工作副本中用 ACR 显影，再复核残差与播放效果。</p><div id="feedbackResult" role="status" aria-live="polite"></div></details>
+<details class="optional-operation" id="step-restore"><summary>恢复原 XMP</summary><p class="muted">选择第 01 步的 RAW 文件夹后即可读取备份，无需分析，重启后仍可恢复。多次写回需从最新备份依次恢复。</p><button id="loadBackups" type="button">读取此 RAW 目录的备份</button><label for="backupChoice">可恢复备份</label><select id="backupChoice" disabled><option value="">请先读取备份</option></select><label class="check"><input id="restoreClosed" type="checkbox">已关闭 ACR 中的此序列，恢复所选备份中的原 XMP</label><button id="restoreXmp" disabled>恢复所选备份</button><div id="restoreResult" role="status"></div><p class="fine">恢复保留备份，不删除 RAW。发现新编辑会停止自动恢复；替换瞬间换出的版本也保留在 retained 子文件夹。恢复中断可再次执行。</p></details>
+</details></section>
+</details>
+<footer>Time-lapse 0.1 · 全局曝光分析工具<br>不恢复丢失的高光，也不自动判定创作意图。</footer>
+</aside>
+<div class="workspace" aria-label="光线轨迹与图片展示">
+<section id="autoWorkspace" class="panel auto-workspace">
+<div class="panel-head"><h2 id="autoHeading">先看完整视频，再确认导出</h2><span id="autoBadge" class="badge">本机 Photoshop 显影</span></div>
+<p id="autoDescription" class="muted">选择素材 → 自动测量与修正 → 完整低分辨率视频 → 观看确认 → 全尺寸 JPG 与对应 XMP。</p>
+<div id="autoResult" class="destination" hidden><span id="autoOutcome"></span><code id="autoResultPath"></code><button id="autoCopy" type="button">复制结果目录</button></div>
+<div id="autoViewer" hidden><p id="autoVideoSummary" class="muted"></p><p id="autoRegionsSummary" class="fine"></p><button id="autoLoadVideo" type="button">载入完整视频</button><video id="autoVideo" controls playsinline preload="metadata" hidden aria-label="完整修正预览视频"></video><p id="autoReviewNote" class="fine"></p><label class="check"><input id="autoReviewed" type="checkbox" disabled>我已完整观看这版视频，确认亮度变化和画面效果，可以导出全尺寸</label><button id="autoExport" type="button" class="primary" disabled>确认并导出全尺寸 JPG 与 XMP</button></div>
+<details id="autoReferencePanel"><summary>查看原始参考与测量区域</summary><p class="fine">初始显影完成后可载入参考画面。自动区域以网格显示；勾选左侧“手动指定四个区域”后，选中区域名称并在画面拖动框选。</p><button id="autoLoadReference" type="button">载入原始参考</button><div id="autoReferenceTools" hidden><label for="autoReferenceIndex">参考帧序号（从 1 开始）</label><input id="autoReferenceIndex" type="number" min="1" step="1" value="1"><label for="autoReferenceRegion">要框选的区域</label><select id="autoReferenceRegion"><option value="primary">亮部区域（黄色）</option><option value="secondary">参考区域（绿色）</option><option value="check_a">检查区域 A（蓝色）</option><option value="check_b">检查区域 B（粉色）</option></select><canvas id="autoReferenceCanvas" aria-label="原始参考画面及测量区域，可拖动框选"></canvas><p id="autoReferenceNote" class="fine" role="status"></p></div></details>
+<div id="autoEmpty" class="auto-empty"><span>◒</span><p>无需手动准备校准图。<br>完整预览完成后在这里播放和确认。</p></div>
+</section>
+<div id="manualWorkspace" hidden>
+<details id="measurementPanel" class="panel measurement-panel" aria-label="参考区域测量诊断" hidden>
+<summary>测量诊断 <span id="measurementBadge" class="badge"></span></summary>
+<div id="measurementChecks" class="measurement-checks"></div>
+<p id="measurementSummary" class="muted"></p>
+<details id="measurementDetails"><summary>查看区域与帧的具体原因</summary>
+<p class="fine">下方网格对应当前 ROI 内的位置，左上角为第 1 行第 1 列。网格用于定位原因，格子数量不作为合格标准。点击格子可筛选相关帧。</p>
+<div class="measurement-layout"><div><div id="measurementGrid" class="measurement-grid" aria-label="ROI 区域诊断网格"></div><p class="fine">✓ 保留部分或全部采样像素 · × 不保留像素 · ! 含剔除像素或局部亮度变化差异（亮度差异仅供人工检查，不排除网格）</p><button id="measurementAllFrames" type="button">查看全部受影响帧</button></div>
+<div class="measurement-detail"><p id="measurementCellInfo"></p><label for="measurementFrame">定位具体帧<select id="measurementFrame"></select></label><p id="measurementFrameInfo"></p><button id="measurementPreview" type="button">查看此帧的区域位置</button></div></div>
+<p id="measurementImageInfo" class="fine"></p><canvas id="measurementCanvas" aria-label="测量区域在当前帧中的位置" hidden></canvas>
+</details></details>
+<section class="panel viewer-panel" aria-label="光线轨迹与逐帧预览">
+<div class="chart-panel"><div class="panel-head"><h2><span class="step">03</span>预览</h2><span id="count" class="badge">等待序列</span></div><div class="legend"><span class="original">● 原始测量</span><span class="target">● 亮度目标</span><span class="actual">● ACR 复核</span><span>参考区域亮度 · EV</span><span>点击曲线区域查看对应帧</span></div><svg id="chart" viewBox="0 0 900 240" role="img" aria-label="序列亮度与修正目标曲线"><text x="450" y="120" text-anchor="middle" fill="#8d958f">导入后，在这里检查每一次亮度变化</text></svg><details class="preview-notes"><summary>曲线与测量说明</summary><p id="measurementScope" class="muted">曲线测量参考区域，不代表整图曝光；绿色为亮度目标，不代表实际曝光或显影预测。</p><p id="notes" class="muted">相机参数用于定位候选断点。每个台阶默认不应用，可在左侧调整。</p></details></div>
+<div class="preview-panel"><div class="panel-head"><h2 id="frameTitle">逐帧查看</h2><div class="playback"><button id="play" disabled>播放</button><span id="frameNumber">—</span></div></div><select id="imageKind" aria-label="预览来源" disabled><option value="original">原始 ACR 小图</option><option value="verified">ACR 重显影复核图</option></select><div class="image-area"><img id="photo" alt="当前 ACR 原始小图" hidden><canvas id="roiCanvas"></canvas><div id="emptyPhoto">◒<p>从夜色到晨光，每一帧都值得保留。</p></div></div><input id="scrub" aria-label="帧序号" type="range" min="0" max="0" value="0" disabled><div id="frameInfo" class="frame-info">显示真实输入小图。曲线中的修正目标不等同于已完成显影。</div></div>
+</section>
+</div></div></div></main>
+<dialog id="jointDialog" aria-labelledby="jointTitle"><section id="step-joint"><div class="joint-heading"><h2 id="jointTitle">手动联合校准</h2><button id="jointClose" type="button" aria-label="关闭联合调色">关闭</button></div>
+<p class="muted">一起平滑曝光、高光和白色色阶。自动选区和计算，你只需按提示在 ACR 导出小图。</p>
+<nav class="joint-progress" aria-label="联合调色步骤"><button id="jointNavPrepare" type="button">1 准备</button><button id="jointNavCalibrate" type="button" disabled>2 导入小图</button><button id="jointNavVerify" type="button" disabled>3 检查效果</button></nav>
+<p id="jointNext" class="joint-next" role="status" aria-live="polite"></p>
+<section id="jointStagePrepare">
+<form id="jointPrepareForm">
+<div class="destination" aria-live="polite"><span id="jointPreviewOrigin">当前小图 · 沿用第 01 步</span><code id="jointPreviewPath">请先在第 01 步选择小图目录，也可在此更换目录。</code></div>
+<details id="jointChangeDirectory"><summary>更换小图目录</summary><label for="jointPreviews">ACR 小图目录</label><div class="folder-field"><input id="jointPreviews" placeholder="输入路径或选择文件夹"><button type="button" data-folder="jointPreviews" data-purpose="previews">选择文件夹</button></div><button id="jointUseAutomatic" type="button" hidden>恢复自动来源</button></details>
+<details id="jointAdvanced"><summary>高级设置（通常不用改）</summary>
+<label for="jointRegionMode">测光区域<select id="jointRegionMode"><option value="auto" selected>自动选择（推荐）</option><option value="manual">手动框选</option></select></label>
+<div class="roi"><button type="button" id="jointPickMid">查看中间调区域</button><button type="button" id="jointPickHigh">查看高光区域</button></div><p id="jointRoiSummary" class="fine"></p>
+<p class="fine">手动时，中间调选有细节的海面或建筑，高光选有层次的亮云；避开太阳、剪影和运动物体，换帧检查整段。</p>
+<label for="jointWindow">平滑窗口<select id="jointWindow"><option>15</option><option selected>31</option><option>61</option></select></label>
+<label for="jointPrevious">继续已有修正包（首轮留空）</label><div class="folder-field"><input id="jointPrevious" placeholder="后续轮次自动沿用"><button type="button" data-folder="jointPrevious" data-purpose="raw">选择文件夹</button></div>
+</details>
+<button id="jointPrepare" type="submit" class="primary" disabled>开始自动准备</button>
+<p class="fine">使用独立 RAW 工作副本进行后续显影。原素材保持不变。</p></form>
+<details><summary>恢复已有进度</summary><p class="fine">本页自动记住进度。已有包也可在这里继续。</p>
+<label for="jointSource">已有校准包</label><div class="folder-field"><input id="jointSource" placeholder="选择后继续第 2 步"><button type="button" data-folder="jointSource" data-purpose="raw">选择文件夹</button></div>
+<label for="jointSolution">已有完整修正包</label><div class="folder-field"><input id="jointSolution" placeholder="选择后继续第 3 步"><button type="button" data-folder="jointSolution" data-purpose="raw">选择文件夹</button></div></details>
+</section>
+<section id="jointStageCalibrate" hidden>
+<h3>在 ACR 导出四组小图</h3>
+<p class="fine">同一套 RAW 工作副本，依次换上下面四套同名 XMP，每次关闭并重新打开 ACR 读取设置，再导出<strong>全序列</strong> JPG。保持同名、同尺寸、sRGB 和完整元数据，不要同步曝光。</p>
+<div id="jointRenderPlan"></div>
+<form id="jointCalibrateForm">
+<details id="jointManualPaths"><summary>小图保存在其他位置？</summary>
+<label for="jointRenderRoot">四组小图的总文件夹</label><div class="folder-field"><input id="jointRenderRoot" placeholder="包含下方四个同名子文件夹"><button type="button" data-folder="jointRenderRoot" data-purpose="previews">选择文件夹</button></div>
+<p class="fine">选择一次总文件夹即可填好四组路径；也可分别指定。</p>
+<label for="jointBaseline">基准 · baseline</label><div class="folder-field"><input id="jointBaseline" required><button type="button" data-folder="jointBaseline" data-purpose="previews">选择文件夹</button></div>
+<label for="jointExposure">曝光 · probe-exposure</label><div class="folder-field"><input id="jointExposure" required><button type="button" data-folder="jointExposure" data-purpose="previews">选择文件夹</button></div>
+<label for="jointHighlights">高光 · probe-highlights</label><div class="folder-field"><input id="jointHighlights" required><button type="button" data-folder="jointHighlights" data-purpose="previews">选择文件夹</button></div>
+<label for="jointWhites">白色色阶 · probe-whites</label><div class="folder-field"><input id="jointWhites" required><button type="button" data-folder="jointWhites" data-purpose="previews">选择文件夹</button></div>
+</details>
+<button id="jointCalibrate" type="submit" class="primary">已导出四组小图，自动计算</button>
+<p class="fine">目录已填好。自动核对显影设置，全部帧通过后生成修正 XMP。</p>
+</form></section>
+<section id="jointStageVerify" hidden>
+<h3>用修正结果显影，再检查一次</h3>
+<div class="destination"><span>将这里的同名 XMP 配对到 RAW 工作副本</span><code id="jointCorrectedPath"></code><button id="jointCopyCorrected" type="button">复制修正 XMP 目录</button></div>
+<p class="fine">重新打开 ACR 读取修正设置，导出一组全序列小图，然后在下面选择。软件会检查亮度与高光是否连续。</p>
+<form id="jointVerifyForm">
+<label for="jointVerified">修正后的小图文件夹</label><div class="folder-field"><input id="jointVerified" required placeholder="选择刚刚导出的全序列 JPG"><button type="button" data-folder="jointVerified" data-purpose="verifyPath">选择文件夹</button></div><button id="jointVerify" class="primary" type="submit">检查效果</button></form>
+<button id="jointContinue" type="button" hidden>继续改善剩余跳变</button>
+</section>
+<div id="jointResult" role="status" aria-live="polite"></div></section></dialog>
+
+<dialog id="regionDialog" aria-labelledby="regionTitle">
+<div class="panel-head"><h2 id="regionTitle">框选参考区域</h2><button id="cancelRegion" type="button" aria-label="取消框选">取消</button></div>
+<p id="regionHelp" class="muted">在图中拖动，框选变化稳定的天空或建筑，避开太阳、深黑和移动物体。重新拖动即可重选；只改变测光区域，不裁切照片。</p>
+<div class="region-stage"><canvas id="regionCanvas" aria-label="参考区域框选画布"></canvas></div>
+<div class="panel-head"><span id="regionFrame" class="muted">加载图片…</span><span id="regionSelection" role="status" aria-live="polite">整张画面</span></div>
+<label class="region-scrub">换一帧检查选区<input id="regionScrub" aria-label="参考区域预览帧" type="range" min="0" max="0" value="0"></label>
+<p id="regionError" class="region-error" role="alert"></p>
+<div class="region-actions"><button id="resetRegion" type="button">使用整张图</button><button id="applyRegion" type="button" class="primary">使用此选区</button></div>
+</dialog></body></html>

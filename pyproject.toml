@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "timelapse-workbench"
+version = "0.1.0"
+description = "Local, inspectable ACR timelapse exposure workbench"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{name = "NimbuSHh"}]
+requires-python = ">=3.12"
+dependencies = ["numpy>=2.0,<3", "Pillow>=11,<13"]
+
+[project.urls]
+Repository = "https://github.com/NimbuSHh/time-lapse"
+Issues = "https://github.com/NimbuSHh/time-lapse/issues"
+
+[project.scripts]
+timelapse = "timelapse.server:main"
+
+[tool.setuptools.package-data]
+timelapse = ["static/*", "*.jsx"]
+
+[tool.setuptools.packages.find]
+include = ["timelapse*"]

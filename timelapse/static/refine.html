@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Time-lapse · 继续修正</title>
+  <link rel="stylesheet" href="/refine.css">
+  <script src="/refine.js" defer></script>
+</head>
+<body>
+  <main>
+    <a class="back" href="/">← 返回原工作台</a>
+    <p class="eyebrow">TIME-LAPSE</p>
+    <h1>接着已有结果修正</h1>
+    <p class="intro">四段小样验证，通过后自动继续810帧</p>
+    <p class="muted">保留原素材和已有结果。小样未通过时保留诊断，不把候选当作验收通过。</p>
+    <section aria-labelledby="state">
+      <div class="status-line"><h2 id="state">正在读取任务</h2><span id="count"></span></div>
+      <p id="phase">等待连接本地工作台</p>
+      <progress id="progress" max="1" aria-label="当前阶段进度"></progress>
+      <p id="message" role="status" aria-live="polite"></p>
+      <p id="error" class="error" role="alert" hidden></p>
+      <div class="actions">
+        <button id="start" type="button" disabled>开始 / 继续</button>
+        <button id="stop" class="secondary" type="button" disabled>停止并保留进度</button>
+      </div>
+    </section>
+    <section id="resultPanel" hidden aria-labelledby="resultTitle">
+      <h2 id="resultTitle">处理结果</h2>
+      <p id="outcome"></p>
+      <pre id="result"></pre>
+    </section>
+  </main>
+</body>
+</html>
