@@ -16,6 +16,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -59,6 +60,14 @@ def _cancelled(check):
 
 
 def _tools():
+    # Frozen apps must use their own matching tools, never another application's
+    # binaries or a shell PATH that Finder does not provide.
+    bundled = Path(__file__).resolve().parent / 'bin'
+    if getattr(sys, 'frozen', False):
+        pair = tuple(bundled/name for name in ('ffmpeg', 'ffprobe'))
+        if all(p.is_file() and os.access(p, os.X_OK) for p in pair):
+            return pair
+        raise ValueError('App 内置视频工具不完整，请重新下载或构建 Time-lapse.app')
     candidates = []
     found = shutil.which('ffmpeg')
     if found:

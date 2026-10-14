@@ -225,10 +225,11 @@ class App:
 
     def trajectory_state(self):
         from .workflow import load_latest
-        saved = load_latest(self.work_output()) if self.work_dir else None
+        output = self.work_output() if self.work_dir else None
+        saved = load_latest(output) if output is not None else None
         task = dict(saved) if saved else None
         with self.lock:
-            job = dict(self.jobs.get(self.trajectory_job, {})) if self.trajectory_output==str(self.work_output()) else {}
+            job = dict(self.jobs.get(self.trajectory_job, {})) if output is not None and self.trajectory_output==str(output) else {}
         active = job.get('state') == 'running'
         if job:
             task = task or {}
